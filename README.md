@@ -158,11 +158,11 @@ The application's configuration can be adjusted in `app/config.py` or via enviro
 
 ## Design Decisions and Approach
 
-## Frame Detection System
+### Frame Detection System
 
 The system uses CLIP (Contrastive Language-Image Pre-training) for frame detection and description generation. It leverages a comprehensive set of labels based on the COCO (Common Objects in Context) dataset and additional custom labels specific to the Ember video library.
 
-### Label Categories
+#### Label Categories
 
 1. **Ember-Specific Labels**
    - Character identification: "Ember character", "Ember close-up", "Ember from distance"
@@ -194,7 +194,7 @@ The system uses CLIP (Contrastive Language-Image Pre-training) for frame detecti
    - Scene types: "candid moment", "posed shot", "action shot", "portrait shot", "landscape shot"
    - Locations: "street scene", "park scene", "office scene", "home scene", "restaurant scene"
 
-### How It Works
+#### How It Works
 
 1. **Frame Extraction**: The system extracts frames from videos at a configurable rate (default: 1 frame per second)
 2. **CLIP Analysis**: Each frame is analyzed using CLIP to generate a description based on the most relevant labels
