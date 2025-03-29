@@ -21,7 +21,7 @@ from app.config import settings
 
 def process_videos(args):
     """Extract frames from videos"""
-    extractor = FrameExtractor()
+    extractor = FrameExtractor(ember_only=args.ember_only)
     return extractor.process_all_videos()
 
 
@@ -38,9 +38,12 @@ def index_frames(metadata, args):
     )
     
     # Create or get collection
-    if args.recreate and settings.COLLECTION_NAME in [c.name for c in client.list_collections()]:
-        client.delete_collection(settings.COLLECTION_NAME)
-        print(f"Deleted existing collection: {settings.COLLECTION_NAME}")
+    if args.recreate:
+        try:
+            client.delete_collection(settings.COLLECTION_NAME)
+            print(f"Deleted existing collection: {settings.COLLECTION_NAME}")
+        except ValueError:
+            print(f"No existing collection found: {settings.COLLECTION_NAME}")
     
     collection = client.get_or_create_collection(
         name=settings.COLLECTION_NAME,
@@ -64,6 +67,11 @@ def index_frames(metadata, args):
         video_name = os.path.splitext(frame_data["video_filename"])[0]
         video_name = video_name.replace("_", " ").replace("-", " ")
         doc_text.append(f"Video: {video_name}")
+        
+        # Add specific context about Ember and phone usage
+        doc_text.append("Ember character")
+        doc_text.append("Frame from Ember video")
+        doc_text.append("Scene from Ember video")
         
         # Add general context about the frame
         doc_text.append("Frame from video content")
@@ -139,6 +147,7 @@ def main():
     parser.add_argument("--recreate", action="store_true", help="Recreate the ChromaDB collection")
     parser.add_argument("--test", action="store_true", help="Run test queries after indexing")
     parser.add_argument("--skip-extraction", action="store_true", help="Skip frame extraction")
+    parser.add_argument("--ember-only", action="store_true", help="Use only Ember-specific labels for faster processing")
     args = parser.parse_args()
     
     # Process videos to extract frames

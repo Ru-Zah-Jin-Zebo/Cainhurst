@@ -3,6 +3,7 @@ fastapi>=0.103.0
 uvicorn>=0.22.0
 pydantic>=2.3.0
 pydantic-settings>=2.0.3
+numpy==1.26.4
 
 # Vector DB and embeddings
 chromadb>=0.4.13

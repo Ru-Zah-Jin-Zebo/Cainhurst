@@ -18,16 +18,18 @@ except ImportError:
 
 
 class FrameExtractor:
-    def __init__(self, videos_dir: Path = None, frames_dir: Path = None):
+    def __init__(self, videos_dir: Path = None, frames_dir: Path = None, ember_only: bool = False):
         """
         Initialize the frame extractor service
         
         Args:
             videos_dir: Directory containing videos to process
             frames_dir: Directory to save extracted frames
+            ember_only: If True, use only Ember-specific labels for faster processing
         """
         self.videos_dir = videos_dir or settings.VIDEOS_DIR
         self.frames_dir = frames_dir or settings.FRAMES_DIR
+        self.ember_only = ember_only
         
         # Ensure directories exist
         os.makedirs(self.videos_dir, exist_ok=True)
@@ -44,6 +46,66 @@ class FrameExtractor:
                 print(f"CLIP model loaded for automatic captioning (using {self.device})")
             except Exception as e:
                 print(f"Failed to load CLIP model: {e}")
+    
+    def _get_candidate_labels(self) -> List[str]:
+        """Get the appropriate set of candidate labels based on mode"""
+        if self.ember_only:
+            return [
+                # Ember-specific labels
+                "Ember character", "Ember holding phone", "Ember using phone",
+                "Ember close-up", "Ember from distance", "Ember smiling",
+                "Ember talking", "Ember walking", "Ember sitting", "Ember standing",
+                
+                # Basic scene context
+                "indoor scene", "outdoor scene", "daytime scene", "nighttime scene",
+                
+                # Phone-specific actions
+                "person holding smartphone", "person using mobile phone",
+                "person looking at phone screen", "person texting on phone",
+                "person taking selfie", "person recording video"
+            ]
+        else:
+            return [
+                # Ember-specific labels
+                "Ember character", "Ember holding phone", "Ember using phone",
+                "Ember close-up", "Ember from distance", "Ember smiling",
+                "Ember talking", "Ember walking", "Ember sitting", "Ember standing",
+                
+                # COCO person-related categories
+                "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat",
+                "traffic light", "fire hydrant", "stop sign", "parking meter", "bench",
+                
+                # COCO indoor objects
+                "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop",
+                "mouse", "remote", "keyboard", "cell phone", "microwave", "oven", "toaster", "sink",
+                "refrigerator", "book", "clock", "vase", "scissors", "teddy bear", "hair drier", "toothbrush",
+                
+                # COCO outdoor objects
+                "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball",
+                "kite", "baseball bat", "baseball glove", "skateboard", "surfboard", "tennis racket",
+                
+                # Scene and environment labels
+                "indoor scene", "outdoor scene", "urban environment", "natural environment",
+                "daytime scene", "nighttime scene", "sunset scene", "sunrise scene",
+                "crowded scene", "empty scene", "busy environment", "quiet environment",
+                
+                # Action and pose labels
+                "person standing", "person sitting", "person walking", "person running",
+                "person jumping", "person dancing", "person exercising", "person working",
+                "person using phone", "person using laptop", "person reading", "person writing",
+                "person talking", "person smiling", "person laughing", "person looking",
+                
+                # Phone-specific labels
+                "person holding smartphone", "person using mobile phone", "person looking at phone screen",
+                "person texting on phone", "person taking selfie", "person recording video",
+                "person scrolling phone", "person holding phone up", "person holding phone down",
+                "person using phone while walking", "person using phone while sitting",
+                
+                # Additional context labels
+                "close-up shot", "wide shot", "medium shot", "group shot", "solo shot",
+                "candid moment", "posed shot", "action shot", "portrait shot", "landscape shot",
+                "street scene", "park scene", "office scene", "home scene", "restaurant scene"
+            ]
     
     def extract_frames_from_video(
         self, 
@@ -142,16 +204,8 @@ class FrameExtractor:
             # Load and preprocess the image
             image = self.clip_preprocess(Image.open(frame_path)).unsqueeze(0).to(self.device)
             
-            # Define a set of candidate labels relevant to the Ember videos
-            candidate_labels = [
-                "Ember character", "person holding phone", "person smiling", 
-                "person talking", "person walking", "person sitting", 
-                "outdoor scene", "indoor scene", "urban environment",
-                "character close-up", "character from distance",
-                "daytime scene", "nighttime scene", "sunset scene",
-                "character with others", "character alone",
-                "character holding object", "character using device"
-            ]
+            # Get appropriate candidate labels based on mode
+            candidate_labels = self._get_candidate_labels()
             
             # Encode the candidate labels
             text = clip.tokenize(candidate_labels).to(self.device)

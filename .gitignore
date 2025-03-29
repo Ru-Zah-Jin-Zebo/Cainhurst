@@ -1,6 +1,4 @@
 # Data directories
-data/
-data/*
 
 # Python cache files
 __pycache__/
@@ -28,5 +26,6 @@ chromadb/
 chromadb/*
 
 # Frame extraction output
-frames/
-frames/* 
+data/frames/* 
+data/videos/*
+data/chroma_data/*

@@ -10,9 +10,58 @@ A FastAPI application that enables semantic search on video frames from the Embe
 - **RESTful API**: Simple API for searching video frames based on natural language queries
 - **Scalable**: Designed to handle a growing library of videos
 
+## Frame Detection System
+
+The system uses CLIP (Contrastive Language-Image Pre-training) for frame detection and description generation. It leverages a comprehensive set of labels based on the COCO (Common Objects in Context) dataset and additional custom labels specific to the Ember video library.
+
+### Label Categories
+
+1. **Ember-Specific Labels**
+   - Character identification: "Ember character", "Ember close-up", "Ember from distance"
+   - Actions: "Ember smiling", "Ember talking", "Ember walking", "Ember sitting", "Ember standing"
+   - Phone interactions: "Ember holding phone", "Ember using phone"
+
+2. **COCO Dataset Categories**
+   - Person-related: "person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "truck", "boat"
+   - Indoor objects: "chair", "couch", "potted plant", "bed", "dining table", "toilet", "tv", "laptop", "cell phone"
+   - Outdoor objects: "umbrella", "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard"
+
+3. **Scene and Environment Labels**
+   - Location types: "indoor scene", "outdoor scene", "urban environment", "natural environment"
+   - Time of day: "daytime scene", "nighttime scene", "sunset scene", "sunrise scene"
+   - Crowd levels: "crowded scene", "empty scene", "busy environment", "quiet environment"
+
+4. **Action and Pose Labels**
+   - Basic actions: "person standing", "person sitting", "person walking", "person running"
+   - Complex actions: "person jumping", "person dancing", "person exercising", "person working"
+   - Device usage: "person using phone", "person using laptop", "person reading", "person writing"
+
+5. **Phone-Specific Labels**
+   - Actions: "person holding smartphone", "person using mobile phone", "person looking at phone screen"
+   - Specific uses: "person texting on phone", "person taking selfie", "person recording video"
+   - Context: "person scrolling phone", "person holding phone up", "person holding phone down"
+
+6. **Shot and Composition Labels**
+   - Shot types: "close-up shot", "wide shot", "medium shot", "group shot", "solo shot"
+   - Scene types: "candid moment", "posed shot", "action shot", "portrait shot", "landscape shot"
+   - Locations: "street scene", "park scene", "office scene", "home scene", "restaurant scene"
+
+### How It Works
+
+1. **Frame Extraction**: The system extracts frames from videos at a configurable rate (default: 1 frame per second)
+2. **CLIP Analysis**: Each frame is analyzed using CLIP to generate a description based on the most relevant labels
+3. **Description Generation**: The top 3 matching labels are combined into a natural language description
+4. **Indexing**: Descriptions are indexed in ChromaDB for semantic search
+
+This comprehensive label set ensures accurate detection of:
+- Ember's presence and actions
+- Phone usage and interactions
+- Scene context and environment
+- Shot composition and style
+
 ## Requirements
 
-- Python 3.8+
+- Python 3.12.7 (required - other versions may have compatibility issues)
 - FastAPI
 - ChromaDB
 - OpenCV
@@ -29,8 +78,13 @@ A FastAPI application that enables semantic search on video frames from the Embe
    cd Cainhurst
    ```
 
-2. Create and activate a virtual environment (optional but recommended):
+2. Create and activate a virtual environment (recommended):
    ```bash
+   # Using conda (recommended):
+   conda create -n cainhurst python=3.12.7
+   conda activate cainhurst
+
+   # Or using venv:
    python -m venv venv
    source venv/bin/activate  # On Windows, use: venv\Scripts\activate
    ```
@@ -42,7 +96,12 @@ A FastAPI application that enables semantic search on video frames from the Embe
 
 4. Place your video files in the `data/videos` directory.
 
-5. Extract and index frames:
+5a. Fast/ Specific Option: Extract and index frames for ember video solution only:
+   ```bash
+   python scripts/process_videos.py --ember-only
+   ```
+
+5b. Slow/ General Option: Extract and index frames:
    ```bash
    python scripts/process_videos.py
    ```
