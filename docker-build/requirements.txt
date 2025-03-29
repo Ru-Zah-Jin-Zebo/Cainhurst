@@ -1,0 +1,21 @@
+# FastAPI and server
+fastapi>=0.103.0
+uvicorn>=0.22.0
+pydantic>=2.3.0
+pydantic-settings>=2.0.3
+
+# Vector DB and embeddings
+chromadb>=0.4.13
+sentence-transformers>=2.2.2
+
+# Video processing
+opencv-python>=4.8.0
+pillow>=10.0.0
+
+# CLIP model for image captioning (optional)
+torch>=2.0.1
+clip @ git+https://github.com/openai/CLIP.git
+
+# Utilities
+tqdm>=4.65.0
+python-dotenv>=1.0.0

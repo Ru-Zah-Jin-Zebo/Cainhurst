@@ -1,0 +1,32 @@
+# Data directories
+data/
+data/*
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.env
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ChromaDB files
+chromadb/
+chromadb/*
+
+# Frame extraction output
+frames/
+frames/* 
