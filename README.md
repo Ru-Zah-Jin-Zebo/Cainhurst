@@ -1,4 +1,4 @@
-# Ember Video Frame Search API
+# Video Frame Search API
 
 A FastAPI application that enables semantic search on video frames from the Ember video library. The API allows users to search with natural language queries and returns the most relevant video frames.
 
@@ -46,7 +46,7 @@ A FastAPI application that enables semantic search on video frames from the Embe
    pip install -r requirements.txt
    ```
 
-4. Place your video files in the `data/videos` directory.
+4. Place your video files in a `Cainhurst/data/videos` directory. 
 
 5a. Fast/ Specific Option: Extract and index frames for ember video solution only:
    ```bash
