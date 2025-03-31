@@ -27,5 +27,5 @@ chromadb/*
 
 # Frame extraction output
 data/frames/* 
-#data/videos/*
+data/videos/*
 data/chroma_data/*
