@@ -73,7 +73,7 @@ A FastAPI application that enables semantic search on video frames from the Embe
    cd Cainhurst
    ```
 
-2. Place your video files in the `data/videos` directory.
+2. Place your video files in a `Cainhurst/data/videos` directory.
 
 3. Build the Docker image:
    ```bash
